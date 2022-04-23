@@ -8,3 +8,12 @@
 input : .space 1000 # creating space of 1000 characters for the input
 invalid_message: .asciiz "-" #error message shows hyphen
 newline: .asciiz "\n" #newline for every code
+
+.text 
+li $v0, 8 #initialize reg $v0 to take the input from the user
+la $a0, input # load the address of the input to $a0 register
+la $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
+syscall #use the system call 
+
+
+
