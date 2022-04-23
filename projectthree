@@ -1,0 +1,10 @@
+# student id : 02991862
+#N= 31
+#M = 21
+#beta = 'u'
+#Delta = 'U'
+
+.data
+input : .space 1000 # creating space of 1000 characters for the input
+invalid_message: .asciiz "-" #error message shows hyphen
+newline: .asciiz "\n" #newline for every code
