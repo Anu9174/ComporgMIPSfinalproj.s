@@ -19,17 +19,25 @@ la $a0, input # load the address of the input to $a0 register
 la $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
 
-li $s3, 1 #store the total number of strings
+li $t1, 1 #store the total number of strings
+addi $t2, $a0 #store the address from $a0 to $t2
 
-number_of_strings:
+semi-colon address:
 la $t0, semi-colon #store the address of semi colon to $s0
 lb $s1, 0($t0) #store the byte equivalent of semi-colon to $s1 register
-beq $s1, 59, increment
 
-increment:
-addi $s3, $s3, 1
-j String_Loop
-String_Loop:
+number_of_strings:
+lb $t3, 0($t2) #store the ascii equivalent of the data stored in $t2 reg in $t3 register 
+beq $s1, 59, string_increment #If equal to semi-colon increments the number of strings
+bne $s1, 59, loop_increment #if not equal increments the loop
+
+string_increment:
+addi $t1, $t1, 1 #increment the value of strings if it encounters semi-colon
+j loop_increment
+
+loop_increment:
+addi $t2, $t2, 1
+j number_of_strings
 
 
 stack_pointer:
