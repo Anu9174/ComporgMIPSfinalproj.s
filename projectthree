@@ -19,11 +19,27 @@ la $a0, input # load the address of the input to $a0 register
 la $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
 
-li $s3, 0 #store the total number of address
+li $s3, 1 #store the total number of strings
 
 number_of_strings:
-la $s0, semi-colon
-lb $s1, 0($s0)
+la $t0, semi-colon #store the address of semi colon to $s0
+lb $s1, 0($t0) #store the byte equivalent of semi-colon to $s1 register
+beq $s1, 59, increment
+
+increment:
+addi $s3, $s3, 1
+j String_Loop
+String_Loop:
+
+
+stack_pointer:
+add $sp, $sp, -4 #change the top of stack
+sw $fp, 0($sp)
+addi $fp, $sp, 0 #store the value of the top of stack 
+
+
+
+
 
 
 
