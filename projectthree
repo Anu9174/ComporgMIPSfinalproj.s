@@ -50,10 +50,8 @@ addi $fp, $sp, 0 #store the value of the top of stack
 
 
 
-
-
-addi $sp
-sub_a:
+li $v0, 10 
+syscall
 
 
 
