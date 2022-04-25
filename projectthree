@@ -5,7 +5,7 @@
 #Delta = 'U'
 
 .data
-input : .space 10 # creating space of 1000 characters for the input
+input : .space 1000 # creating space of 1000 characters for the input
 invalid_message: .asciiz "-" #error message shows hyphen
 newline: .asciiz "\n" #newline for every code
 comma: .asciiz "," # comma for the output of the integer value
@@ -16,7 +16,7 @@ semi_colon: .asciiz ";" # semi-colon to read distinguish the different colon val
 text_input:
 li $v0, 8 #initialize reg $v0 to take the input from the user
 la $a0, input # load the address of the input to $a0 register
-li $a1, 11 #the final address of the input from the user, cannot be more than a 1000 characters.
+li $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
 add $s3, $a0, $zero
 li $t1, 1 #store the total number of strings
@@ -28,8 +28,8 @@ la $t0, semi_colon #store the address of semi colon to $s0
 lb $s1, 0($t0) #store the byte equivalent of semi-colon to $s1 register
 
 number_of_strings:
-#sub $t4, $t2, $s3
-#beq $t4, $a1, print 
+sub $t4, $t2, $s3
+beq $t4, $a1, stack_pointer
 lb $t3, 0($t2) #store the ascii equivalent of the data stored in $t2 reg in $t3 register 
 beq $t3, $s1, string_increment #If equal to semi-colon increments the number of strings
 bne $t3, $s1, loop_increment #if not equal increments the loop
@@ -47,27 +47,20 @@ stack_pointer:
 add $sp, $sp, -4 #change the top of stack
 sw $fp, 0($sp)
 addi $fp, $sp, 0 #store the value of the top of stack 
+jal sub_a
 
+sub_a:
 
-
-#print:
-#li $v0, 1
-#add $a0, $t1, $zero
-#syscall
-
-
-li $v0, 10 
+print_integervalue:
+li $v0, 1
+add $a0, $(return value)
 syscall
 
 
 
 
-
-
-
-
-
-
+li $v0, 10 
+syscall
 
 
 
