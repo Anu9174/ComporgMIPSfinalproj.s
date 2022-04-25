@@ -56,6 +56,15 @@ li $v0, 1
 add $a0, $(return value)
 syscall
 
+print_comma:
+li $v0, 4
+la $a0, comma
+syscall
+
+print_errormessage:
+li $v0,4
+la, $a0,invalid_message
+syscall
 
 
 
