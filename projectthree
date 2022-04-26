@@ -59,6 +59,22 @@ li $t8, 0 #counter for the calculation part
 li $t7, 0 #store the i -1 part of the calculation 
 li $s6, 1
 
+print_integervalue:
+li $v0, 1
+add $a0, $(return value)
+syscall
+
+print_comma:
+li $v0, 4
+la $a0, comma
+syscall
+
+print_errormessage:
+li $v0,4
+la, $a0,invalid_message
+syscall
+
+
 sub_b:
 trailingwhitespaces:         
 move $a1,$a0              # move the address to a1 registers, to pass as a parameter
@@ -86,20 +102,65 @@ beqz $s2, print_invalid   #if there are zero characteres print that it is invali
 Morethan4:
 bgt $s2, 4, print_invalid   # if more than 4 characters print that it is invalid
 
-print_integervalue:
-li $v0, 1
-add $a0, $(return value)
-syscall
+j calc
 
-print_comma:
-li $v0, 4
-la $a0, comma
-syscall
 
-print_errormessage:
-li $v0,4
-la, $a0,invalid_message
-syscall
+FirstString:
+lb $t4, 0($t3)      #store the first byte to t4
+bne $t4, 32, PassAddress   #check if not equal to empty space jump to address
+#beq $t1, $t0, print_invalid   #check the end of the string, this is for empty string
+addi $t3, $t3, 1      #increment the address
+j FirstString                #go back to the loop
+PassAddress:          
+move $v0, $t3         #copy it to pass as a parameter
+jr $ra
+
+LastString:
+lb $t7, 0($t5)          # load the first byte into t6
+beq $t7, 32, EndofString    #compare to empty space
+addi $t5, $t5, 1        #increment the loop
+j LastString
+EndofString:
+move $v0, $t5       #copy to pass parameter
+jr $ra
+
+calc:
+addi $s4, $s2, -1
+
+Calculation:
+move $a0, $s0
+jal Setofcharacters 
+move $t9, $v0
+beq $s4, $zero, powerzero   #if equal to zero print the sum
+powervalue:
+beq $s4 , 3, powerthree
+beq $s4, 2, powertwo
+beq $s4, 1, powerone
+#beq $s4, 0, powerzero
+
+powerthree:
+
+mult $t9, $s3
+mflo $s5
+mult $s5,$s3
+mflo $s5
+mult $s5, $s3
+mflo $s5
+add $t2, $s5, $t2
+
+j ml
+
+powertwo:
+
+mult $t9, $s3
+mflo $s5
+mult $s5,$s3
+mflo $s5
+
+add $t2, $s5, $t2
+
+j ml
+
 
 
 Exit:
