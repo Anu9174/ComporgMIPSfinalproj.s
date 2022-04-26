@@ -59,6 +59,7 @@ li $t8, 0 #counter for the calculation part
 li $t7, 0 #store the i -1 part of the calculation 
 li $s6, 1
 
+sub_b:
 trailingwhitespaces:         
 move $a1,$a0              # move the address to a1 registers, to pass as a parameter
 addi $a0, $zero, 0        #change a0, to 0
@@ -71,6 +72,19 @@ addi $a0, $zero, 0
 add $t5, $a1, $zero       #change a0, to 0
 jal LastString          #function definition to call the last character of the string
 move $s1, $v0           #create a variable to store the value passed from the subprogram to store the last character
+
+Length:
+subu $s2,$s1,$s0        #calculate the total number of charcaters in the string
+
+li $v0, 4
+la $a0, new_line
+syscall
+
+InvalidChar:
+ZeroCharacters:
+beqz $s2, print_invalid   #if there are zero characteres print that it is invalid
+Morethan4:
+bgt $s2, 4, print_invalid   # if more than 4 characters print that it is invalid
 
 print_integervalue:
 li $v0, 1
