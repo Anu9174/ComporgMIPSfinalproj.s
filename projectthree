@@ -5,7 +5,7 @@
 #Delta = 'U'
 
 .data
-input : .space 1000 # creating space of 1000 characters for the input
+input : .space 10 # creating space of 1000 characters for the input
 invalid_message: .asciiz "-" #error message shows hyphen
 newline: .asciiz "\n" #newline for every code
 comma: .asciiz "," # comma for the output of the integer value
@@ -16,7 +16,7 @@ semi_colon: .asciiz ";" # semi-colon to read distinguish the different colon val
 text_input:
 li $v0, 8 #initialize reg $v0 to take the input from the user
 la $a0, input # load the address of the input to $a0 register
-li $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
+li $a1, 11 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
 
 add $t5, $a0, $zero #store the address of the first string to $t5
@@ -50,23 +50,24 @@ stack_pointer:
 add $sp, $sp, -8 #change the top of stack
 sw $fp, 0($sp)
 addi $fp, $sp, 0 #store the value of the top of stack 
-add $t5, 0($sp)  #store the address in $t5 into top of stack 
+add $sp, $t5, $zero  #store the address in $t5 into top of stack 
 
 addi $a0, $t5, 0
 jal sub_a
 
 sub_a:
 
+sw $ra, 4($sp)                    #store the return value to $t3
+jal sub_b				#call the sub_b
+add $t3, $v0, $zero			#store the passed parameter to $t3, whether it be invalid message or integer value 
 
-jal sub_b
-lw $t3, 4($sp) #store the return value to $t3
-beq $t3, 45, print_errormessage
+beq $t3, 45, print_errormessage		#if the passed parameter is equal to 45 then error
 j print_integervalue 
 
 
 print_integervalue:
 li $v0, 1
-add $a0, $(return value)
+add $a0, $t3, $zero
 syscall
 j print_comma
 
@@ -93,24 +94,21 @@ li $t7, 0 #store the i -1 part of the calculation
 li $s6, 1
 
 trailingwhitespaces:         
-move $a1,$a0              # move the address to a1 registers, to pass as a parameter
+move $a1,$t5              # move the address to a1 registers, to pass as a parameter
 addi $a0, $zero, 0        #change a0, to 0
 add $t3, $a0, $a1 
 jal FirstString            #function definition, to call the address of the first character that exists
-move $s0, $v0             #create a variable to store the value passed from the subprogram to store the first character
+move $t0, $v0             #create a variable to store the value passed from the subprogram to store the first character
 
-move $a1,$s0            #then copy the value of the first string to reg a1
+move $a1,$t0            #then copy the value of the first string to reg a1
 addi $a0, $zero, 0 
 add $t1, $a1, $zero       #change a0, to 0
 jal LastString          #function definition to call the last character of the string
-move $s1, $v0           #create a variable to store the value passed from the subprogram to store the last character
+move $t6, $v0           #create a variable to store the value passed from the subprogram to store the last character
 
 Length:
-subu $s2,$s1,$s0        #calculate the total number of charcaters in the string
+subu $s2,$t6,$t0        #calculate the total number of charcaters in the string
 
-li $v0, 4
-la $a0, new_line
-syscall
 
 InvalidChar:
 ZeroCharacters:
@@ -122,34 +120,35 @@ j calc
 
 
 FirstString:
-lb $t4, 0($t3)      #store the first byte to t4
-bne $t4, 32, PassAddress   #check if not equal to empty space jump to address
+lb $t0, 0($t3)      #store the first byte to t4
+bne $t0, 32, PassAddress   #check if not equal to empty space jump to address
 #beq $t1, $t0, print_invalid   #check the end of the string, this is for empty string
 addi $t3, $t3, 1      #increment the address
 j FirstString                #go back to the loop
 PassAddress:          
-move $v0, $t3         #copy it to pass as a parameter
+move $v0, $t3        #copy it to pass as a parameter
 jr $ra
 
 LastString:
-lb $t7, 0($t5)          # load the first byte into t6
+lb $t7, 0($t1)          # load the first byte into t6
 beq $t7, 32, EndofString    #compare to empty space
 beq $t7, 59, EndofStringsegment
 addi $t1, $t1, 1        #increment the loop
 j LastString
 EndofString:
-move $v0, $t1       #copy to pass parameter
+move $v0, $t1      #copy to pass parameter
 jr $ra
 
 EndofStringsegment: # changes the TOS value that was the initial address to new address
-li $t7, 0($sp)         #change the TOS to the new value
+
+addi $sp,  $t3, -1        #change the TOS to the new value but with a subtracted top of stack
 j EndofString  #then jump to end of string value
 
 calc:
 addi $s4, $s2, -1
 
 Calculation:
-move $a0, $s0
+move $a0, $t0
 jal Setofcharacters 
 move $t9, $v0
 beq $s4, $zero, powerzero   #if equal to zero print the sum
@@ -235,6 +234,9 @@ jr $ra
 #j Calculation
 
 Invalid:
+j print_invalid
+
+print_invalid:
 li $v0, 52
 jr $ra
 
@@ -252,31 +254,3 @@ jr $ra
 Exit:
 li $v0, 10 
 syscall
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
