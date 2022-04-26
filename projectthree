@@ -181,6 +181,15 @@ add $t2, $s5, $t2
 j print_sum
 
 Setofcharacters:
+lb $t6, 0($a0)                         # load the value of the first charcater to the reg t6
+blt $t6, 48, Invalid
+blt $t6, 57, Numbers
+blt $t6, 65, Invalid
+blt $t6, 85, UpperCase
+blt $t6, 97, Invalid
+blt $t6, 117, LowerCase
+bge $t6, 117, Invalid
+
                            
 
 Exit:
