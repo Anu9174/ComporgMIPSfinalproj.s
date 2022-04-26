@@ -190,6 +190,31 @@ blt $t6, 97, Invalid
 blt $t6, 117, LowerCase
 bge $t6, 117, Invalid
 
+Numbers:
+addi $t4, $t6, -48
+j Passvalue
+
+UpperCase:
+addi $t4, $t6, -55
+j Passvalue
+
+
+LowerCase:
+addi $t4, $t6, -87
+j Passvalue
+
+
+LessThanequalto4:
+bgt $t4, 4, Invalid
+j Passvalue
+
+Passvalue:
+move $v0, $t4   #to pass the value in the register
+jr $ra
+#j Calculation
+
+Invalid:
+j print_invalid
                            
 
 Exit:
