@@ -161,6 +161,19 @@ add $t2, $s5, $t2
 
 j ml
 
+powerone:
+mult $t9, $s3
+mflo $s5
+add $t2, $s5, $t2
+j ml
+
+
+
+ml:
+addi $s4, $s4 , -1
+addi $s0, $s0,1
+j Calculation
+
 
 
 Exit:
