@@ -174,7 +174,14 @@ addi $s4, $s4 , -1
 addi $s0, $s0,1
 j Calculation
 
+powerzero:
+mult $t9, $s6
+mflo $s5
+add $t2, $s5, $t2
+j print_sum
 
+Setofcharacters:
+                           
 
 Exit:
 li $v0, 10 
