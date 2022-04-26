@@ -9,7 +9,7 @@ input : .space 1000 # creating space of 1000 characters for the input
 invalid_message: .asciiz "-" #error message shows hyphen
 newline: .asciiz "\n" #newline for every code
 comma: .asciiz "," # comma for the output of the integer value
-semi_colon: .asciiz ";" # semi-colon to read distinguish the different colon values\
+semi_colon: .asciiz ";" # semi-colon to read distinguish the different colon values
 
 
 .text 
@@ -62,10 +62,23 @@ li $t8, 0 #counter for the calculation part
 li $t7, 0 #store the i -1 part of the calculation 
 li $s6, 1
 
+jal sub_b
+lw $t3, 4($sp) #store the return value to $t3
+beq $t3, 45, print_errormessage
+j print_integervalue 
+
 
 print_integervalue:
 li $v0, 1
 add $a0, $(return value)
+syscall
+j print_comma
+
+
+
+print_errormessage:
+li $v0,4
+la, $a0,invalid_message
 syscall
 
 print_comma:
@@ -73,10 +86,6 @@ li $v0, 4
 la $a0, comma
 syscall
 
-print_errormessage:
-li $v0,4
-la, $a0,invalid_message
-syscall
 
 
 sub_b:
