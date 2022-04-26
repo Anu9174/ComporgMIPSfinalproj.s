@@ -215,6 +215,18 @@ jr $ra
 
 Invalid:
 j print_invalid
+
+print_sum:
+li $v0, 1
+add $a0, $t2, $zero
+syscall
+j Exit
+
+print_sum:
+li $v0, 1
+add $a0, $t2, $zero
+syscall
+j Exit
                            
 
 Exit:
