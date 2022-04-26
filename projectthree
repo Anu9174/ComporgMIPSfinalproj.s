@@ -18,38 +18,41 @@ li $v0, 8 #initialize reg $v0 to take the input from the user
 la $a0, input # load the address of the input to $a0 register
 li $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
-add $s4, $a0, $zero
-li $t1, 1 #store the total number of strings
-addi $t5, $a0, 0 #store the address from $a0 to $t2
-j semi_colon_address
 
-semi_colon_address:
-la $t0, semi_colon #store the address of semi colon to $s0
-lb $s1, 0($t0) #store the byte equivalent of semi-colon to $s1 register
+add $t5, $a0, $zero #store the address of the first string to $t5
+li $s3, 31 #store $s3 with my base value.
 
-number_of_strings:
-sub $t4, $t5, $s4
-beq $t4, $a1, stack_pointer
-lb $t3, 0($t5) #store the ascii equivalent of the data stored in $t2 reg in $t3 register 
-beq $t3, $s1, string_increment #If equal to semi-colon increments the number of strings
-bne $t3, $s1, loop_increment #if not equal increments the loop
+#li $t1, 1 #store the total number of strings
+#addi $t5, $a0, 0 #store the address from $a0 to $t2
+#j semi_colon_address
 
-string_increment:
-addi $t1, $t1, 1 #increment the value of strings if it encounters semi-colon
-j loop_increment
+#semi_colon_address:
+#la $t0, semi_colon #store the address of semi colon to $s0
+#lb $s1, 0($t0) #store the byte equivalent of semi-colon to $s1 register
 
-loop_increment:
-addi $t5, $t5, 1
-j number_of_strings
+#number_of_strings:
+#sub $t4, $t5, $s4
+#beq $t4, $a1, stack_pointer
+#lb $t3, 0($t5) #store the ascii equivalent of the data stored in $t2 reg in $t3 register 
+#beq $t3, $s1, string_increment #If equal to semi-colon increments the number of strings
+#bne $t3, $s1, loop_increment #if not equal increments the loop
+
+#string_increment:
+#addi $t1, $t1, 1 #increment the value of strings if it encounters semi-colon
+#j loop_increment
+
+#loop_increment:
+#addi $t5, $t5, 1
+#j number_of_strings
 
 
 stack_pointer:
 add $sp, $sp, -8 #change the top of stack
 sw $fp, 0($sp)
 addi $fp, $sp, 0 #store the value of the top of stack 
-add $t2, 0($sp)  #store the address into top of stack 
-li $s3, 31 #store $s3 with my base value.
+add $t5, 0($sp)  #store the address in $t5 into top of stack 
 
+addi $a0, $t5, 0
 jal sub_a
 
 sub_a:
@@ -58,6 +61,7 @@ li $t2, 0 #store the sum of the values
 li $t8, 0 #counter for the calculation part
 li $t7, 0 #store the i -1 part of the calculation 
 li $s6, 1
+
 
 print_integervalue:
 li $v0, 1
@@ -85,7 +89,7 @@ move $s0, $v0             #create a variable to store the value passed from the 
 
 move $a1,$s0            #then copy the value of the first string to reg a1
 addi $a0, $zero, 0 
-add $t5, $a1, $zero       #change a0, to 0
+add $t1, $a1, $zero       #change a0, to 0
 jal LastString          #function definition to call the last character of the string
 move $s1, $v0           #create a variable to store the value passed from the subprogram to store the last character
 
@@ -118,11 +122,16 @@ jr $ra
 LastString:
 lb $t7, 0($t5)          # load the first byte into t6
 beq $t7, 32, EndofString    #compare to empty space
-addi $t5, $t5, 1        #increment the loop
+beq $t7, 59, EndofStringsegment
+addi $t1, $t1, 1        #increment the loop
 j LastString
 EndofString:
-move $v0, $t5       #copy to pass parameter
+move $v0, $t1       #copy to pass parameter
 jr $ra
+
+EndofStringsegment: # changes the TOS value that was the initial address to new address
+li $t7, 0($sp)         #change the TOS to the new value
+j EndofString  #then jump to end of string value
 
 calc:
 addi $s4, $s2, -1
@@ -226,7 +235,7 @@ print_sum:
 li $v0, 1
 add $a0, $t2, $zero
 syscall
-j Exit
+j Exit 
                            
 
 Exit:
