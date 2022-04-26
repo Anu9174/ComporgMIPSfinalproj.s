@@ -252,5 +252,8 @@ jr $ra
                            
 
 Exit:
+lw $fp, 0($sp)    Restore frame info
+addi $sp, $sp, 8
+
 li $v0, 10 
 syscall
