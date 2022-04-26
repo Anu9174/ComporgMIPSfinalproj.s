@@ -5,7 +5,7 @@
 #Delta = 'U'
 
 .data
-input : .space 10 # creating space of 1000 characters for the input
+input : .space 1000 # creating space of 1000 characters for the input
 invalid_message: .asciiz "-" #error message shows hyphen
 newline: .asciiz "\n" #newline for every code
 comma: .asciiz "," # comma for the output of the integer value
@@ -16,7 +16,7 @@ semi_colon: .asciiz ";" # semi-colon to read distinguish the different colon val
 text_input:
 li $v0, 8 #initialize reg $v0 to take the input from the user
 la $a0, input # load the address of the input to $a0 register
-li $a1, 11 #the final address of the input from the user, cannot be more than a 1000 characters.
+li $a1, 1001 #the final address of the input from the user, cannot be more than a 1000 characters.
 syscall #use the system call 
 
 add $t5, $a0, $zero #store the address of the first string to $t5
